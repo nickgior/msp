@@ -12,7 +12,7 @@ app.config['MYSQL_DATABASE_DB'] = 'msp'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
-SESSION_INTERVAL = 3 
+SESSION_INTERVAL = 15
 
 
 def auth_user(username, password):
@@ -27,12 +27,21 @@ def auth_user(username, password):
 def check_session():
   if 'msp_session' in request.cookies:
     cur = mysql.connect().cursor()
-    cur.execute('''SELECT id, user_id FROM session WHERE id=%d and expires > NOW()''' % (int(request.cookies["msp_session"])) )
+    cur.execute('''SELECT id, user_id, expires FROM session WHERE id=%d and expires > NOW()''' % (int(request.cookies["msp_session"])) )
     if cur.rowcount == 1:
       rv = cur.fetchone()
-      return rv[1]
+      return rv
     else:
       return False
+  else:
+    return False
+
+def get_session_details(msp_session):
+  cur = mysql.connect().cursor()
+  cur.execute('''SELECT id, user_id, expires FROM session WHERE id=%d and expires > NOW()''' % (int(msp_session)) )
+  if cur.rowcount != 0:
+    rv = cur.fetchone()
+    return rv
   else:
     return False
 
@@ -79,7 +88,10 @@ def hello_world():
   if not session:
     hello_contents.append("<p>No Session Found</p>")
   else:
-    hello_contents.append("<p>Session Token: %s</p>" % (session))
+    hello_contents.append("<p>Session Token: %s</p>" % (session[0]))
+    hello_contents.append("<br>")
+    hello_contents.append("<p>Session Details: <br>  Session ID: %i<br>  Customer Id: %i<br>  Expires: %s</p>" % session )
+    hello_contents.append("<br>")
 
   hello_contents.append("</html>")
   resp = Response( "\n".join(hello_contents) )
