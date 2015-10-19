@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <title>Flask Intro - login page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+  </head>
+  <body>
+    <div class="container">
+      <h1>Please login to MSP</h1>
+      <br>
+      <form action="" method="post">
+        <input type="hidden" name="url" value="{{ url }}">
+        <input type="text" placeholder="Username" name="username" value="{{ request.form.username }}">
+         <input type="password" placeholder="Password" name="password" value="{{ request.form.password }}">
+        <input class="btn btn-default" type="submit" value="Login">
+      </form>
+      {% if error %}
+        <p><strong>Error:</strong> {{ error }}
+      {% endif %}
+    </div>
+  </body>
+</html>
